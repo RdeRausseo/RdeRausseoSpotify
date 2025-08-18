@@ -1,19 +1,19 @@
 import React from "react";
-import Proptype from "prop-types";
+import PropTypes from "prop-types";
 
-const Song = ({ id, nombre }) => {
+const Song = ({ index, nombre }) => {
   return (
-    <div className="border border-light-subtle">
+    <div className="p-3">
       <p>
-        <span className="me-4">{id}</span> {nombre}
+        <span className="me-4">{index}</span> {nombre}
       </p>
     </div>
   );
 };
 
 Song.propTypes = {
-  id: Proptypes.number.isRequired,
-  nombre: Proptypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  nombre: PropTypes.string.isRequired,
 };
 
 export default Song;
