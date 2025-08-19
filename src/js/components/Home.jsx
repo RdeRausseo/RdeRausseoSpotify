@@ -3,8 +3,8 @@ import Song from "./Song";
 import {
   BiPlayCircle,
   BiPauseCircle,
-  BiArrowLeftCircle,
-  BiArrowRightCircle,
+  BiLeftArrowCircle,
+  BiRightArrowCircle,
 } from "react-icons/bi";
 
 //include images into your bundle
@@ -14,6 +14,7 @@ import rigoImage from "../../img/rigo-baby.jpg";
 const Home = () => {
   const [songs, setSongs] = useState([]);
   const refAudio = useRef(null);
+  const [show, setShow] = useState(true);
 
   useEffect(() => {
     const getSongs = async () => {
@@ -58,17 +59,25 @@ const Home = () => {
       </ul>
 
       <div className=" text-center fixed-bottom">
-        <button className="btn border-0 bg-transparent p-0">
+        <button onClick={""} className="btn border-0 bg-transparent p-0">
+          <BiLeftArrowCircle className="" size={80} />
+        </button>
+        <button
+          onClick={() => {
+            setShow(true);
+          }}
+          className={show ? "d-none" : "btn p-0 border-0 bg-transparent"}
+        >
+          <BiPauseCircle size={80} />
+        </button>
+        <button
+          onClick={() => {setShow(false)}}
+          className={show ? "btn p-0 bg-transparent border-0" : "d-none"}
+        >
           <BiPlayCircle size={80} />
         </button>
-        <button className="btn p-0 border-0 bg-transparent">
-          <BiPauseCircle className="" size={80} />
-        </button>
-        <button>
-          <BiArrowLeftCircle className="" size={80} />
-        </button>
-        <button>
-          <BiArrowRightCircle size={80} />
+        <button onClick={""} className="btn p-0 bg-transparent border-0">
+          <BiRightArrowCircle size={80} />
         </button>
         <audio ref={refAudio} />
       </div>
