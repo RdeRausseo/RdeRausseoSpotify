@@ -7,14 +7,11 @@ import {
   BiRightArrowCircle,
 } from "react-icons/bi";
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
-
-//create your first component
 const Home = () => {
   const [songs, setSongs] = useState([]);
   const refAudio = useRef(null);
-  const [show, setShow] = useState(true);
+  const [isPlaying, setisPlaying] = useState(false);
+  const [currentSong, setCurrentSong] = useState([]);
 
   useEffect(() => {
     const getSongs = async () => {
@@ -44,14 +41,30 @@ const Home = () => {
 
   useEffect(() => {
     console.log("Canciones cargadas: ", songs);
-  }, [songs]);
+  }, []);
+
+  useEffect(() => {
+    if (refAudio.current) {
+      refAudio.current.src = currentSong.previewUrl;
+      refAudio.current.play();
+    }
+  }, [currentSong]);
+
+  function next(url) {}
 
   return (
     <div className="position-relative p-3">
       <ul className="mx-auto list-group w-50">
         {songs?.map((song, index) => {
           return (
-            <li className="list-group-item bg-body-tertiary" key={index}>
+            <li
+              onClick={() => {
+                setCurrentSong(song);
+                setisPlaying(true);
+              }}
+              className="list-group-item bg-body-tertiary"
+              key={index}
+            >
               <Song index={index} nombre={song.artistName} />
             </li>
           );
@@ -59,27 +72,32 @@ const Home = () => {
       </ul>
 
       <div className=" text-center fixed-bottom">
-        <button onClick={""} className="btn border-0 bg-transparent p-0">
+        <button className="btn border-0 bg-transparent p-0">
           <BiLeftArrowCircle className="" size={80} />
         </button>
         <button
           onClick={() => {
-            setShow(true);
+            setisPlaying(false);
+            refAudio.current.pause();
           }}
-          className={show ? "d-none" : "btn p-0 border-0 bg-transparent"}
+          className={isPlaying ? "btn p-0 border-0 bg-transparent" : "d-none"}
         >
           <BiPauseCircle size={80} />
         </button>
         <button
-          onClick={() => {setShow(false)}}
-          className={show ? "btn p-0 bg-transparent border-0" : "d-none"}
+          onClick={() => {
+            setisPlaying(true);
+            refAudio.current.play();
+          }}
+          className={isPlaying ? "d-none" : "btn p-0 bg-transparent border-0"}
         >
           <BiPlayCircle size={80} />
         </button>
-        <button onClick={""} className="btn p-0 bg-transparent border-0">
+        <button className="btn p-0 bg-transparent border-0">
           <BiRightArrowCircle size={80} />
         </button>
-        <audio ref={refAudio} />
+        
+        <audio ref={refAudio} src={songs[0]?.previewUrl} />
       </div>
     </div>
   );
