@@ -12,6 +12,7 @@ const Home = () => {
   const refAudio = useRef(null);
   const [isPlaying, setisPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const getSongs = async () => {
@@ -50,7 +51,19 @@ const Home = () => {
     }
   }, [currentSong]);
 
-  function next(url) {}
+  function handleNextSong() {
+    const nextIndex = currentIndex === songs.length - 1 ? 0 : currentIndex + 1;
+    setCurrentIndex(nextIndex);
+    setCurrentSong(songs[nextIndex]);
+    setisPlaying(true);
+  }
+
+  function handlePreviousSong() {
+    const previousIndex = currentIndex !== 0 ? currentIndex - 1 : 0;
+    setCurrentIndex(previousIndex);
+    setCurrentSong(songs[previousIndex]);
+    setisPlaying(true);
+  }
 
   return (
     <div className="position-relative p-3">
@@ -59,8 +72,14 @@ const Home = () => {
           return (
             <li
               onClick={() => {
-                setCurrentSong(song);
-                setisPlaying(true);
+                if (currentSong && currentSong.trackId === song.trackId) {
+                  refAudio.current.play();
+                  setisPlaying(true);
+                } else {
+                  setCurrentSong(song);
+                  setisPlaying(true);
+                  setCurrentIndex(index);
+                }
               }}
               className="list-group-item bg-body-tertiary"
               key={index}
@@ -72,7 +91,12 @@ const Home = () => {
       </ul>
 
       <div className=" text-center fixed-bottom">
-        <button className="btn border-0 bg-transparent p-0">
+        <button
+          onClick={() => {
+            handlePreviousSong();
+          }}
+          className="btn border-0 bg-transparent p-0"
+        >
           <BiLeftArrowCircle className="" size={80} />
         </button>
         <button
@@ -93,11 +117,16 @@ const Home = () => {
         >
           <BiPlayCircle size={80} />
         </button>
-        <button className="btn p-0 bg-transparent border-0">
+        <button
+          onClick={() => {
+            handleNextSong();
+          }}
+          className="btn p-0 bg-transparent border-0"
+        >
           <BiRightArrowCircle size={80} />
         </button>
-        
-        <audio ref={refAudio} src={songs[0]?.previewUrl} />
+
+        <audio ref={refAudio} src={currentSong?.previewUrl} />
       </div>
     </div>
   );
