@@ -8,7 +8,7 @@ import {
 } from "react-icons/bi";
 
 const Home = () => {
-  const [songs, setSongs] = useState([]);
+  const [songs, setSongs] = useState([null]);
   const refAudio = useRef(null);
   const [isPlaying, setisPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState([]);
@@ -59,9 +59,28 @@ const Home = () => {
   }
 
   function handlePreviousSong() {
-    const previousIndex = currentIndex !== 0 ? currentIndex - 1 : 0;
-    setCurrentIndex(previousIndex);
-    setCurrentSong(songs[previousIndex]);
+    if (currentIndex === 0) {
+      refAudio.current.currentTime = 0;
+      refAudio.current.play();
+      setisPlaying(true);
+    } else {
+      const previousIndex = currentIndex - 1;
+      setCurrentIndex(previousIndex);
+      setCurrentSong(songs[previousIndex]);
+      setisPlaying(true);
+    }
+  }
+
+  function handleSongClick(song, index) {
+    console.log("indice de la canción: " + index);
+    console.log("canción: ", song);
+    if (song && currentSong.trackId === song.trackId) {
+      refAudio.current.currentTime = 0;
+      refAudio.current.play();
+    } else {
+      setCurrentSong(song);
+      setCurrentIndex(index);
+    }
     setisPlaying(true);
   }
 
@@ -72,19 +91,12 @@ const Home = () => {
           return (
             <li
               onClick={() => {
-                if (currentSong && currentSong.trackId === song.trackId) {
-                  refAudio.current.play();
-                  setisPlaying(true);
-                } else {
-                  setCurrentSong(song);
-                  setisPlaying(true);
-                  setCurrentIndex(index);
-                }
+                handleSongClick(song, index);
               }}
               className="list-group-item bg-body-tertiary"
               key={index}
             >
-              <Song index={index} nombre={song.artistName} />
+              <Song index={index} nombre={song?.artistName} />
             </li>
           );
         })}
@@ -126,7 +138,13 @@ const Home = () => {
           <BiRightArrowCircle size={80} />
         </button>
 
-        <audio ref={refAudio} src={currentSong?.previewUrl} />
+        <audio
+          ref={refAudio}
+          src={currentSong?.previewUrl}
+          onEnded={() => {
+            handleNextSong();
+          }}
+        />
       </div>
     </div>
   );
